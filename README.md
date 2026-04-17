@@ -20,3 +20,6 @@ A single-page expense tracking application built with React that allows users to
 - JavaScript 
 - HTML & CSS
 - Vite 
+
+##Live Demo
+[Click here to view it](https://expense-tracker-ijm956e8t-ishah1234s-projects.vercel.app/)
