@@ -25,6 +25,34 @@ A single-page expense tracking application built with React that allows users to
 - HTML & CSS
 - Vite
 
+## Run Locally
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/ishah1234/expense-tracker
+```
+
+2. Move into the project folder:
+
+```bash
+cd expense-tracker
+```
+
+3. Install dependencies:
+
+```bash
+npm install
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+5. Open the local URL shown in your terminal (usually http://localhost:5173).
+
 ## Live Demo
 
 [Click here to view it](https://projecttrackwise.vercel.app/)
