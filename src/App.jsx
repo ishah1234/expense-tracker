@@ -3,6 +3,8 @@ import ExpenseForm from "./components/ExpenseForm";
 import ExpenseList from "./components/List";
 import Summary from "./components/summary";
 import CategoryChart from "./components/categories";
+import BudgetAlerts from "./components/BudgetAlerts";
+import TrendChart from "./components/TrendChart";
 import Popup from "./components/popup";
 import "./App.css";
 
@@ -39,9 +41,64 @@ export default function App() {
   const [filterCategory, setFilterCategory] = useState("All");
   const [sortBy, setSortBy] = useState("date_desc");
   const [search, setSearch] = useState("");
+  const [dateRange, setDateRange] = useState("this_month");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [totalMonthlyBudget, setTotalMonthlyBudget] = useState("");
+  const [categoryBudgets, setCategoryBudgets] = useState({});
+
+  const dateRangeFiltered = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    return expenses.filter((expense) => {
+      const expenseDate = new Date(`${expense.date}T00:00:00`);
+      if (Number.isNaN(expenseDate.getTime())) return false;
+
+      if (dateRange === "this_month") {
+        return (
+          expenseDate.getFullYear() === today.getFullYear() &&
+          expenseDate.getMonth() === today.getMonth()
+        );
+      }
+
+      if (dateRange === "this_week") {
+        const day = today.getDay();
+        const mondayOffset = day === 0 ? -6 : 1 - day;
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() + mondayOffset);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        return expenseDate >= weekStart && expenseDate <= weekEnd;
+      }
+
+      if (dateRange === "last_30_days") {
+        const start = new Date(today);
+        start.setDate(today.getDate() - 29);
+        return expenseDate >= start && expenseDate <= today;
+      }
+
+      if (dateRange === "custom") {
+        const fromDate = customFrom ? new Date(`${customFrom}T00:00:00`) : null;
+        const toDate = customTo ? new Date(`${customTo}T00:00:00`) : null;
+
+        if (fromDate && Number.isNaN(fromDate.getTime())) return false;
+        if (toDate && Number.isNaN(toDate.getTime())) return false;
+
+        if (fromDate && toDate) {
+          return expenseDate >= fromDate && expenseDate <= toDate;
+        }
+        if (fromDate) return expenseDate >= fromDate;
+        if (toDate) return expenseDate <= toDate;
+        return true;
+      }
+
+      return true;
+    });
+  }, [expenses, dateRange, customFrom, customTo]);
 
   const filtered = useMemo(() => {
-    let list = expenses.filter((e) => {
+    let list = dateRangeFiltered.filter((e) => {
       const matchCat =
         filterCategory === "All" || e.category === filterCategory;
       const matchSearch =
@@ -56,7 +113,31 @@ export default function App() {
       if (sortBy === "amount_asc") return a.amount - b.amount;
       return 0;
     });
-  }, [expenses, filterCategory, search, sortBy]);
+  }, [dateRangeFiltered, filterCategory, search, sortBy]);
+
+  const monthlyExpenses = useMemo(() => {
+    const now = new Date();
+    return expenses.filter((expense) => {
+      const expenseDate = new Date(`${expense.date}T00:00:00`);
+      return (
+        !Number.isNaN(expenseDate.getTime()) &&
+        expenseDate.getFullYear() === now.getFullYear() &&
+        expenseDate.getMonth() === now.getMonth()
+      );
+    });
+  }, [expenses]);
+
+  const monthlyTotalSpend = useMemo(
+    () => monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0),
+    [monthlyExpenses],
+  );
+
+  const monthlyCategorySpend = useMemo(() => {
+    return monthlyExpenses.reduce((map, expense) => {
+      map[expense.category] = (map[expense.category] || 0) + expense.amount;
+      return map;
+    }, {});
+  }, [monthlyExpenses]);
 
   function handleAdd(payload) {
     dispatch({ type: "ADD", payload });
@@ -76,11 +157,14 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <div>
-          <h1>Expense Tracker</h1>
+        <div className="app-title">
+          <h1>TrackWise</h1>
           <p className="subtitle">{expenses.length} expenses total</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setPopup("add")}>
+        <button
+          className="btn btn-primary app-add-btn"
+          onClick={() => setPopup("add")}
+        >
           + Add Expense
         </button>
       </header>
@@ -88,6 +172,31 @@ export default function App() {
       <Summary expenses={filtered} />
 
       <div className="toolbar">
+        <select
+          value={dateRange}
+          onChange={(e) => setDateRange(e.target.value)}
+        >
+          <option value="this_week">This Week</option>
+          <option value="this_month">This Month</option>
+          <option value="last_30_days">Last 30 Days</option>
+          <option value="custom">Custom Range</option>
+        </select>
+        {dateRange === "custom" && (
+          <>
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              aria-label="Custom range start date"
+            />
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => setCustomTo(e.target.value)}
+              aria-label="Custom range end date"
+            />
+          </>
+        )}
         <input
           className="search-input"
           placeholder="Search expenses..."
@@ -119,7 +228,19 @@ export default function App() {
         onDelete={(id) => setDeleteConfirm(id)}
       />
 
-      <CategoryChart expenses={expenses} />
+      <BudgetAlerts
+        categories={CATEGORIES}
+        monthlyTotalSpend={monthlyTotalSpend}
+        monthlyCategorySpend={monthlyCategorySpend}
+        totalMonthlyBudget={totalMonthlyBudget}
+        setTotalMonthlyBudget={setTotalMonthlyBudget}
+        categoryBudgets={categoryBudgets}
+        setCategoryBudgets={setCategoryBudgets}
+      />
+
+      <TrendChart expenses={filtered} />
+
+      <CategoryChart expenses={filtered} />
 
       {popup === "add" && (
         <Popup title="Add Expense" onClose={() => setPopup(null)}>

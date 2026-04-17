@@ -20,20 +20,47 @@ body {
 }
 
 .app-header {
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 1.5rem;
+}
+
+.app-title {
+  text-align: center;
 }
 
 .app-header h1 {
   font-size: 22px;
   font-weight: 600;
+  color: #1a7a1a;
+  margin: 0;
+  letter-spacing: 0;
 }
 .subtitle {
   font-size: 13px;
   color: #888;
   margin-top: 2px;
+}
+
+.app-add-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .app-add-btn {
+    position: static;
+    transform: none;
+  }
 }
 
 .btn {
@@ -209,6 +236,129 @@ body {
   font-weight: 500;
   color: #888;
   margin-bottom: 14px;
+}
+
+.budget-caption {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.budget-row {
+  margin-bottom: 12px;
+}
+
+.budget-row-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.budget-label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.budget-meta {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.budget-input {
+  width: 130px;
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.budget-progress-bg {
+  margin-top: 8px;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.budget-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.budget-progress-fill.none,
+.budget-status.none {
+  color: #888;
+  background: #dcdcdc;
+}
+
+.budget-progress-fill.ok {
+  background: #1d9e75;
+}
+
+.budget-progress-fill.warning {
+  background: #ba7517;
+}
+
+.budget-progress-fill.danger {
+  background: #e24b4a;
+}
+
+.budget-status {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.budget-status.ok {
+  color: #1d9e75;
+}
+
+.budget-status.warning {
+  color: #ba7517;
+}
+
+.budget-status.danger {
+  color: #e24b4a;
+}
+
+.budget-divider {
+  border-top: 1px solid #eee;
+  margin: 14px 0;
+}
+
+.trend-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.trend-svg {
+  width: 100%;
+  min-width: 320px;
+  display: block;
+}
+
+.trend-axis {
+  stroke: #d6d6d6;
+  stroke-width: 1;
+}
+
+.trend-line {
+  stroke: #378add;
+  stroke-width: 2.5;
+}
+
+.trend-point {
+  fill: #378add;
+}
+
+.trend-footnote {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #777;
+  font-size: 12px;
 }
 
 .bar-row {
