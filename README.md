@@ -1,16 +1,22 @@
-# React + Vite
+# Expense Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-page expense tracking application built with React that allows users to manage their personal finances by adding, viewing, editing, and deleting expenses.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Add, edit, and delete expenses
+- Categorize expenses (Food & Groceries, Travel, Shopping, Entertainment, Utilities, Rent, Education, Other)
+- Filter expenses by category
+- Search expenses by title or description
+- Sort expenses by date or amount
+- Real-time summary statistics (total spending, highest expense, average per expense, total count)
+- Spending breakdown by category with visual progress bars
+- Form validation (title is mandatory, amount must be a whole number, date is required)
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React 
+- React Hooks (useState, useReducer, useMemo)
+- JavaScript 
+- HTML & CSS
+- Vite 
